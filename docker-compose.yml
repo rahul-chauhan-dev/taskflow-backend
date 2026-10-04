@@ -1,0 +1,35 @@
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: taskflow
+      MYSQL_USER: taskflow
+      MYSQL_PASSWORD: taskflow-pass
+      MYSQL_ROOT_PASSWORD: root-pass
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot-pass"]
+      interval: 5s
+      retries: 20
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:mysql://db:3306/taskflow
+      DB_USERNAME: taskflow
+      DB_PASSWORD: taskflow-pass
+      JWT_SECRET: local-rehearsal-secret-at-least-32-bytes-long
+      CORS_ORIGINS: http://localhost:5173
+      DDL_AUTO: update
+    ports:
+      - "8080:8080"
+
+volumes:
+  dbdata:
