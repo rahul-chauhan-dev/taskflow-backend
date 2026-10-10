@@ -15,21 +15,4 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: maven
-      - run: mvn -B verifyname: CI
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-
-jobs:
-  test:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: 21
-          cache: maven
       - run: mvn -B verify
